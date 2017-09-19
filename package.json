@@ -10,7 +10,7 @@
 
   "engines": {
     "node": "6.11.3"
-  }
+  },
   "author": "Malik Mazhar Ali",
   "license": "ISC",
   "dependencies": {
