@@ -3,6 +3,29 @@
 <html>
 <HTML>
 <HEAD>
+<TITLE>Welcome to Chat App - Socket.IO</TITLE>
+</HEAD>
+<BODY BGCOLOR="FFFFFF">
+  <p> Chat App </p>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io();
+    socket.on('connect', () => {
+      console.log('Connected to Server');
+      
+    });
+    socket.on('disconnect', () => {
+      console.log(`disconnected from server ${new Date()}`)
+    })
+  </script>
+</BODY>
+</HTML>
+
+
+<!-- <!DOCTYPE html>
+<html>
+<HTML>
+<HEAD>
 <TITLE>Your Title Here</TITLE>
 </HEAD>
 <BODY BGCOLOR="FFFFFF">
@@ -19,4 +42,4 @@ support@mysite.com</a>.
 <BR> <B><I>This is a new sentence without a paragraph break, in bold italics.</I></B>
 <HR>
 </BODY>
-</HTML>
+</HTML> -->
