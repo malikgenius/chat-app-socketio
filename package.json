@@ -7,13 +7,13 @@
     "start": "node server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-
   "engines": {
     "node": "6.11.3"
   },
   "author": "Malik Mazhar Ali",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.15.4"
+    "express": "^4.15.4",
+    "socket.io": "^2.0.3"
   }
 }
