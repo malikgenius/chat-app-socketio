@@ -3,26 +3,33 @@ socket.on('connect', function () {
   console.log('Connected to Server');
 });
 
-// when new user joined welcome message for it
-socket.on('welcomeUser', function (message){
-  console.log('from: ',message.from,',', message.text);
-  console.log('createdAt: ',message.createdAt);
-});
-
-// new user connected -- Broadcast message to everybody else but not the user.
-socket.on('userJoined', function (message){
+socket.on('newMessage', function (message){
   console.log('from: ',message.from, message.text);
   console.log('createdAt: ',message.createdAt);
-});
+  //console.log(`Message from server which was sent from client1 ${message}`)
+  //console.log(message);
+  });
+
+
+// we can make new call for everything or we can use the same newMessage for all from server. below is disabled as i am using new message.
+// when new user joined welcome message for it
+// socket.on('welcomeUser', function (message){
+//   console.log('from: ',message.from,',', message.text);
+//   console.log('createdAt: ',message.createdAt);
+// });
+
+// new user connected -- Broadcast message to everybody else but not the user.
+// socket.on('userJoined', function (message){
+//   console.log('from: ',message.from, message.text);
+//   console.log('createdAt: ',message.createdAt);
+// });
 // socket.emit('createMessage', {
 //   from: 'client1',
 //   text: 'this is my message please destribute it to others!'
 // });
 
-socket.on('newMessage', function (message){
-  //console.log(`Message from server which was sent from client1 ${message}`)
-  console.log(message);
-});
+
+
 
 
 

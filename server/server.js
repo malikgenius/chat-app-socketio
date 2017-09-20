@@ -2,6 +2,7 @@ const express = require('express');
 const socketIO = require('socket.io');
 const path = require('path');     // path library let you use routes outside your folder easily .. good one to use.
 const http = require('http');     // http is must with socketio ... better to use this way in all projects.
+const {generateMessage} = require('./utils/message');
 
 var publicpath = path.join(__dirname, '../public');
 console.log(publicpath);
@@ -14,14 +15,8 @@ app.use(express.static(publicpath));
 
 io.on('connection', (socket) => {      // (socket) can be called anything ... same socket will be used to check the disconnection of a user as its saved in socket.
   console.log(`New user Connected`);
-
   var clientIp2 = socket.request.connection.remoteAddress;
-
   console.log(clientIp2);
-  //var clientIP = socket.handshake.address;
-  //var clientAgent = socket.client.remoteAddress;
-  //console.log(clientAgent)
-  //console.log(clientIP);
 
   // socket.emit('newEmail', {           // emit is used to push data to client or from client server ..
   //   from: "malik@example.com",
@@ -34,28 +29,23 @@ io.on('connection', (socket) => {      // (socket) can be called anything ... sa
 
   // Welcome user when joined .. only to the user who joined
 
-  socket.emit('welcomeUser', {
-    from: 'Web Admin',
-    text: "Welcome User to our chat system!",
-    createdAt: new Date().getTime()
-  })
+  socket.emit('newMessage', generateMessage('Admin', `welcome to our chat app, you are coming from ${clientIp2}`))
   // user joined broadcast message to all but the user, which user joined wont get this message
-  socket.broadcast.emit('userJoined', {
-    from: 'Web Admin',
-    text: `new user from ${clientIp2} joined, Please welcome :)`,
-    createdAt: new Date().getTime()
-  });
+  socket.broadcast.emit('newMessage',generateMessage('Admin', `new user from ${clientIp2} joined, Please welcome`));
+  // below is the original one kept for reference ... without function import
+  // socket.broadcast.emit('newMessage', {
+  //   from: 'Web Admin',
+  //   text: `new user from ${clientIp2} joined, Please welcome :)`,
+  //   createdAt: new Date().getTime()
+  // });
 
+  // clients sending messages to everybody -- broadcast 
   socket.on('createMessage', (message) => {
     //var message;
     //console.log(`message from client to distribute ${message}`);
     console.log(message)
     // Broadcast message to everybody including the sender.
-    io.emit('newMessage', {     // io.emit will broadcast message to all connected users ....
-      from: message.from,     // message.from will give us clear output on console and browser when we use it later.
-      text: message.text,
-      createdAt: new Date().getTime()
-    });
+    io.emit('newMessage', generateMessage(message.from, message.text));
 
     // broadcast message to everybody but the sender .. wont get it--- just for testing, never use in production.
     // socket.broadcast.emit('newMessage', {
