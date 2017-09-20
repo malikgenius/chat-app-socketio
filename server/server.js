@@ -14,10 +14,14 @@ app.use(express.static(publicpath));
 
 io.on('connection', (socket) => {      // (socket) can be called anything ... same socket will be used to check the disconnection of a user as its saved in socket.
   console.log(`New user Connected`);
-  var clientIP = socket.handshake.address;
+
+  var clientIp2 = socket.request.connection.remoteAddress;
+
+  console.log(clientIp2);
+  //var clientIP = socket.handshake.address;
   //var clientAgent = socket.client.remoteAddress;
   //console.log(clientAgent)
-  console.log(clientIP);
+  //console.log(clientIP);
 
   // socket.emit('newEmail', {           // emit is used to push data to client or from client server ..
   //   from: "malik@example.com",
@@ -38,7 +42,7 @@ io.on('connection', (socket) => {      // (socket) can be called anything ... sa
   // user joined broadcast message to all but the user, which user joined wont get this message
   socket.broadcast.emit('userJoined', {
     from: 'Web Admin',
-    text: `new user from ${clientIP} joined, Please welcome :)`,
+    text: `new user from ${clientIp2} joined, Please welcome :)`,
     createdAt: new Date().getTime()
   });
 
