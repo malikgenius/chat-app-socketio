@@ -4,10 +4,10 @@ socket.on('connect', function () {
 
 });
 
-socket.emit('createMessage', {
-  from: 'client1',
-  text: 'this is my message please destribute it to others!'
-});
+// socket.emit('createMessage', {
+//   from: 'client1',
+//   text: 'this is my message please destribute it to others!'
+// });
 
 socket.on('newMessage', function (message){
   //console.log(`Message from server which was sent from client1 ${message}`)
