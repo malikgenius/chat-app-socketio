@@ -1,9 +1,19 @@
 var socket = io();
 socket.on('connect', function () {
   console.log('Connected to Server');
-
 });
 
+// when new user joined welcome message for it
+socket.on('welcomeUser', function (message){
+  console.log('from: ',message.from,',', message.text);
+  console.log('createdAt: ',message.createdAt);
+});
+
+// new user connected -- Broadcast message to everybody else but not the user.
+socket.on('userJoined', function (message){
+  console.log('from: ',message.from, message.text);
+  console.log('createdAt: ',message.createdAt);
+});
 // socket.emit('createMessage', {
 //   from: 'client1',
 //   text: 'this is my message please destribute it to others!'
