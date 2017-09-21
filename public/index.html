@@ -7,7 +7,15 @@
 </HEAD>
 <BODY BGCOLOR="FFFFFF">
   <p> Chat App </p>
+  <ol id="messages"></ol>
+
+  <form id="message-form">
+    <input name="from" type="text" placeholder="your name here"/>
+    <input name="message" type="text" placeholder="Type your Message"/>
+    <button>Send</button>
+  </form>
   <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/libs/jquery-3.2.1.min.js"></script>
   <script src="/js/index.js"></script>
 </BODY>
 </HTML>
