@@ -2,7 +2,7 @@ const express = require('express');
 const socketIO = require('socket.io');
 const path = require('path');     // path library let you use routes outside your folder easily .. good one to use.
 const http = require('http');     // http is must with socketio ... better to use this way in all projects.
-const {generateMessage, generateLocationMessage} = require('./utils/message');
+const {generateMessage} = require('./utils/message');
 
 var publicpath = path.join(__dirname, '../public');
 console.log(publicpath);
@@ -29,12 +29,7 @@ io.on('connection', (socket) => {      // (socket) can be called anything ... sa
 
   // Welcome user when joined .. only to the user who joined
 
-  socket.emit('newMessage', generateMessage('Admin',`welcome to our chat app, you are coming from ${clientIp2}`))
-  // socket.emit('newMessage', {
-  //     from:'Web Admin',
-  //     text:`you are coming from ${clientIp2}`,
-  //     createdAt: new Date().getTime()
-  // })
+  socket.emit('newMessage', generateMessage(`welcome to our chat app, you are coming from ${clientIp2}`))
   // user joined broadcast message to all but the user, which user joined wont get this message
   socket.broadcast.emit('newMessage',generateMessage('Admin', `new user from ${clientIp2} joined, Please welcome`));
   // below is the original one kept for reference ... without function import
@@ -60,12 +55,12 @@ io.on('connection', (socket) => {      // (socket) can be called anything ... sa
     // });
   });
 
-  socket.on('createLocationMessage', (coords) => {
-    console.log(coords);
-    io.emit('newLocationMessage', generateLocationMessage('Admin ',coords.latitude, coords.longitude));
-    
-    // callback('your location was shared successfuly!')
-    });
+socket.on('createLocation', (location) => {
+  console.log(location);
+
+  io.emit('newMessage', generateMessage(`${clientIp2}, ${location.latitude}, ${location.longitude}`));
+  // callback('your location was shared successfuly!')
+  });
 
 
   socket.on('disconnect', () => {
