@@ -50,8 +50,8 @@ io.on('connection', (socket) => {      // (socket) can be called anything ... sa
     //console.log(`message from client to distribute ${message}`);
     console.log(message)
     // Broadcast message to everybody including the sender.
-    io.emit('newMessage', generateMessage(message.from, message.text));
-    callback('your data Submitted successfuly!');
+    io.emit('newMessage', generateMessage('User', message.text));
+    callback();
     // broadcast message to everybody but the sender .. wont get it--- just for testing, never use in production.
     // socket.broadcast.emit('newMessage', {
     //   from: message.from,
@@ -63,8 +63,8 @@ io.on('connection', (socket) => {      // (socket) can be called anything ... sa
   socket.on('createLocationMessage', (coords) => {
     console.log(coords);
     io.emit('newLocationMessage', generateLocationMessage('Admin ',coords.latitude, coords.longitude));
-    
-    // callback('your location was shared successfuly!')
+
+    //callback();
     });
 
 
