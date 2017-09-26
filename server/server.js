@@ -3,9 +3,10 @@ const socketIO = require('socket.io');
 const path = require('path');     // path library let you use routes outside your folder easily .. good one to use.
 const http = require('http');     // http is must with socketio ... better to use this way in all projects.
 const {generateMessage, generateLocationMessage} = require('./utils/message');
+const moment = require('moment')
 
 var publicpath = path.join(__dirname, '../public');
-console.log(publicpath);
+//console.log(publicpath);
 
 var port = process.env.PORT || 3000;
 var app = express();
@@ -29,11 +30,11 @@ io.on('connection', (socket) => {      // (socket) can be called anything ... sa
 
   // Welcome user when joined .. only to the user who joined
 
-  socket.emit('newMessage', generateMessage('Admin',`welcome to our chat app, you are coming from ${clientIp2}`))
+  socket.emit('newMessage', generateMessage('Admin',`welcome to our chat app`))
   // socket.emit('newMessage', {
   //     from:'Web Admin',
-  //     text:`you are coming from ${clientIp2}`,
-  //     createdAt: new Date().getTime()
+  //     text:'welcome to your chat app',
+  //     createdAt: moment().valueOf()
   // })
   // user joined broadcast message to all but the user, which user joined wont get this message
   socket.broadcast.emit('newMessage',generateMessage('Admin', `new user from ${clientIp2} joined, Please welcome`));
