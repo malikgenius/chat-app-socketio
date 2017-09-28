@@ -1,24 +1,21 @@
-const moment = require('moment');
+var moment = require('moment');
 
-var date = moment();
+// Jan 1st 1970 00:00:10 am
 
-console.log(date.format("dddd, MMMM Do YYYY, h:mm:ss a"));
-// console.log(date.locale());
-var age = moment([1980, 3, 9]).toNow(true);
-console.log(age)
+// var date = new Date();
+// var months = ['Jan', 'Feb']
+// console.log(date.getMonth());
 
-var start = moment([1980, 3, 9]);
-var end = moment([2017, 9, 23]);
-var totalTime = end.to(start);
-console.log('Your Age ',start.to(new Date(2017, 09, 23),true))
+// var date = moment();
+// date.add(100, 'year').subtract(9, 'months');
+// console.log(date.format('MMM Do, YYYY'));
 
+// 10:35 am
+// 6:01 am
 
-var birthDate = moment([1980, 09, 03]).toNow();
-console.log(birthDate);
+var someTimestamp = moment().valueOf();
+console.log(someTimestamp)
 
-var a = moment([1980, 03, 09]);
-var b = moment([2017, 09, 23]);
-console.log('You`r',a.to(b, true),'old');
-
-//hour and minutes .. hour is unpadded and minutes are padded .. 
-console.log(date.format('h:mm a'));
+var createdAt = 1234;
+var date = moment(createdAt);
+console.log(date.format('h:mm a'))

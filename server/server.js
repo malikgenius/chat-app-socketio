@@ -1,81 +1,67 @@
+const path = require('path');
+const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
-const path = require('path');     // path library let you use routes outside your folder easily .. good one to use.
-const http = require('http');     // http is must with socketio ... better to use this way in all projects.
+
 const {generateMessage, generateLocationMessage} = require('./utils/message');
-const moment = require('moment')
+const {isRealString} = require('./utils/validation');
+const {Users} = require('./utils/users');
 
-var publicpath = path.join(__dirname, '../public');
-//console.log(publicpath);
-
-var port = process.env.PORT || 3000;
+const publicPath = path.join(__dirname, '../public');
+const port = process.env.PORT || 3000;
 var app = express();
 var server = http.createServer(app);
 var io = socketIO(server);
-app.use(express.static(publicpath));
+var users = new Users();
 
-io.on('connection', (socket) => {      // (socket) can be called anything ... same socket will be used to check the disconnection of a user as its saved in socket.
-  console.log(`New user Connected`);
-  var clientIp2 = socket.request.connection.remoteAddress;
-  console.log(clientIp2);
+app.use(express.static(publicPath));
 
-  // socket.emit('newEmail', {           // emit is used to push data to client or from client server ..
-  //   from: "malik@example.com",
-  //   text: 'Hi its your Server sending you email !!! '
-  // });
-  //
-  // socket.on('composeEmail', (email) => {      // socket.on will wait and watch for pushed data from client ..
-  //   console.log(email);
-  // })
+io.on('connection', (socket) => {
+  console.log('New user connected');
 
-  // Welcome user when joined .. only to the user who joined
+  socket.on('join', (params, callback) => {
+    if (!isRealString(params.name) || !isRealString(params.room)) {
+      return callback('Name and room name are required.');
+    }
 
-  socket.emit('newMessage', generateMessage('Admin',`welcome to our chat app`))
-  // socket.emit('newMessage', {
-  //     from:'Web Admin',
-  //     text:'welcome to your chat app',
-  //     createdAt: moment().valueOf()
-  // })
-  // user joined broadcast message to all but the user, which user joined wont get this message
-  socket.broadcast.emit('newMessage',generateMessage('Admin', `new user from ${clientIp2} joined, Please welcome`));
-  // below is the original one kept for reference ... without function import
-  // socket.broadcast.emit('newMessage', {
-  //   from: 'Web Admin',
-  //   text: `new user from ${clientIp2} joined, Please welcome :)`,
-  //   createdAt: new Date().getTime()
-  // });
+    socket.join(params.room);
+    users.removeUser(socket.id);
+    users.addUser(socket.id, params.name, params.room);
 
-  // clients sending messages to everybody -- broadcast
-  socket.on('createMessage', (message, callback) => {     // callback to send user data back, if their form was submitted sucessfully.
-    //var message;
-    //console.log(`message from client to distribute ${message}`);
-    console.log(message)
-    // Broadcast message to everybody including the sender.
-    io.emit('newMessage', generateMessage('User', message.text));
+    io.to(params.room).emit('updateUserList', users.getUserList(params.room));
+    socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
+    socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined.`));
     callback();
-    // broadcast message to everybody but the sender .. wont get it--- just for testing, never use in production.
-    // socket.broadcast.emit('newMessage', {
-    //   from: message.from,
-    //   text: message.text,
-    //   createdAt: new Date().getTime()
-    // });
+  });
+
+  socket.on('createMessage', (message, callback) => {
+    var user = users.getUser(socket.id);
+
+    if (user && isRealString(message.text)) {
+      io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+    }
+
+    callback();
   });
 
   socket.on('createLocationMessage', (coords) => {
-    console.log(coords);
-    io.emit('newLocationMessage', generateLocationMessage('Admin ',coords.latitude, coords.longitude));
+    var user = users.getUser(socket.id);
 
-    //callback();
-    });
-
-
-  socket.on('disconnect', () => {
-    console.log(`User disconnected at ${new Date()}`)
+    if (user) {
+      io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude));  
+    }
   });
 
+  socket.on('disconnect', () => {
+    var user = users.removeUser(socket.id);
+
+    if (user) {
+      io.to(user.room).emit('updateUserList', users.getUserList(user.room));
+      io.to(user.room).emit('newMessage', generateMessage('Admin', `${user.name} has left.`));
+    }
+  });
 });
 
-
-server.listen(port,() => {
-  console.log(`Server is listening on ${port}`)
+server.listen(port, () => {
+  console.log(`Server is up on ${port}`);
 });
